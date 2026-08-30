@@ -34,9 +34,12 @@ Use $specsfy-06-tdd-bdd em modo verify na spec 0004.
 
 1. A skill seleciona a próxima condição de aceite.
 2. Encontra o runner real do projeto.
-3. Cria um teste com marcador de rastreabilidade.
-4. Executa somente o teste focal.
-5. Confirma:
+3. Em Laravel, exige `.env.testing` com destino explícito e separado do `.env`.
+4. Confere o comando com `check_database_safety.mjs`. Se o resultado não for
+   `SAFE`, não executa nenhum teste.
+5. Cria um teste com marcador de rastreabilidade.
+6. Executa somente o teste focal.
+7. Confirma:
 
 ```text
 RED válido: o teste falhou porque a recuperação ainda não foi implementada.
@@ -64,6 +67,8 @@ suíte normal do projeto, não em um arquivo `.feature` nem em uma segunda suít
 - criar testes que não correspondem às condições de aceite.
 - considerar o Gherkin sozinho como teste executado.
 - aprovar o plano sem prova focal.
+- executar teste para descobrir se a conexão está correta.
+- recriar ou limpar todo o banco para preparar a suíte.
 
 ## Próximo passo
 

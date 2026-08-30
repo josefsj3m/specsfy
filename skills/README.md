@@ -104,6 +104,10 @@ projeto antes de perguntar. Respostas já confirmadas não voltam para a rodada.
 O perfil registra o nível de conhecimento e orienta a profundidade: iniciantes
 recebem explicações dos termos e efeitos práticos, enquanto pessoas experientes
 podem responder diretamente sobre versões, arquitetura, testes e integrações.
+O setup também confirma quando uma entidade precisa de CRUD, mapeia o acesso às
+telas pelos menus do sistema e pergunta quando essas duas informações não
+estiverem claras. Ao final de toda execução completa, ele chama o documentador
+para reconstruir a documentação técnica do sistema existente.
 
 ## Catálogo
 

@@ -3,6 +3,7 @@ import { chmod, mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 import {
+  assertSafeLaravelTestDatabase,
   detectProjectTestCommand,
   presentOutputLine,
   runProjectTests,
@@ -10,6 +11,17 @@ import {
 import { temporaryDirectory } from "./helpers.js";
 
 describe("runner do projeto consumidor", () => {
+  async function configureSafeDatabase(project: string): Promise<void> {
+    await writeFile(
+      join(project, ".env"),
+      "APP_ENV=local\nDB_CONNECTION=mysql\nDB_HOST=127.0.0.1\nDB_DATABASE=produto_dev\n",
+    );
+    await writeFile(
+      join(project, ".env.testing"),
+      "APP_ENV=testing\nDB_DATABASE=produto_test\n",
+    );
+  }
+
   test("detecta Laravel Pest sem executar código", async () => {
     const project = await temporaryDirectory();
     await writeFile(join(project, "artisan"), "#!/usr/bin/env php\n");
@@ -72,6 +84,7 @@ describe("runner do projeto consumidor", () => {
     await writeFile(join(project, "artisan"), "");
     await mkdir(join(project, "tests"));
     await writeFile(join(project, "tests/Pest.php"), "<?php\n");
+    await configureSafeDatabase(project);
     const php = join(commands, "php");
     await writeFile(
       php,
@@ -93,5 +106,45 @@ describe("runner do projeto consumidor", () => {
       if (previousPath === undefined) delete process.env.PATH;
       else process.env.PATH = previousPath;
     }
+  });
+
+  test("suspende testes sem .env.testing antes de iniciar o runner", async () => {
+    const project = await temporaryDirectory();
+    await writeFile(join(project, "artisan"), "");
+    await mkdir(join(project, "tests"));
+    await writeFile(join(project, "tests/Pest.php"), "<?php\n");
+
+    await expect(runProjectTests(project)).rejects.toThrow(".env.testing");
+  });
+
+  test("recusa o banco de desenvolvimento e traits destrutivas", async () => {
+    const project = await temporaryDirectory();
+    await writeFile(join(project, "artisan"), "");
+    await mkdir(join(project, "tests"));
+    await writeFile(
+      join(project, ".env"),
+      "APP_ENV=local\nDB_CONNECTION=mysql\nDB_DATABASE=produto_dev\n",
+    );
+    await writeFile(
+      join(project, ".env.testing"),
+      "APP_ENV=testing\nDB_DATABASE=produto_dev\n",
+    );
+    await writeFile(join(project, "tests/Pest.php"), "<?php\n");
+
+    await expect(assertSafeLaravelTestDatabase(project)).rejects.toThrow(
+      "banco de desenvolvimento",
+    );
+
+    await writeFile(
+      join(project, ".env.testing"),
+      "APP_ENV=testing\nDB_DATABASE=produto_test\n",
+    );
+    await writeFile(
+      join(project, "tests/Pest.php"),
+      "<?php\nuse Illuminate\\Foundation\\Testing\\RefreshDatabase;\n",
+    );
+    await expect(assertSafeLaravelTestDatabase(project)).rejects.toThrow(
+      "recriar migrations",
+    );
   });
 });

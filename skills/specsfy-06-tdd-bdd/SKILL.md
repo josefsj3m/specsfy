@@ -22,6 +22,29 @@ Leia o BDD como referência e converta o comportamento especificado em testes TD
 executáveis e evidência rastreável. O Gherkin ajuda o usuário e o agente a
 entender contexto, ação e resultado; ele próprio não é uma suíte de testes.
 
+## Proteção obrigatória do banco
+
+Antes de executar qualquer teste focal, suíte ou regressão, confira o comando e
+o ambiente:
+
+```bash
+node .agents/skills/specsfy-setup/scripts/check_database_safety.mjs \
+  --project <raiz> --command "<comando-de-teste>"
+```
+
+Em Laravel, a conferência exige `.env.testing`, `APP_ENV=testing` e um banco
+explicitamente diferente do banco de desenvolvimento registrado no `.env`.
+Não execute nenhum teste enquanto o resultado for `PENDING`. Corrija o ambiente
+de testes, repita a conferência e prossiga somente depois de `SAFE`.
+
+Trate `IGNORED` como descarte obrigatório do comando. Não execute, não adapte
+com `--force` e não peça autorização para rodar `migrate:fresh`,
+`migrate:refresh`, `migrate:reset`, `migrate:rollback`, `db:wipe`,
+`schema:drop`, `prisma migrate reset`, `DROP DATABASE`, `DROP SCHEMA`,
+`DROP TABLE`, `TRUNCATE` ou equivalentes. Não use `RefreshDatabase` nem
+`DatabaseMigrations`; em Laravel, prefira `DatabaseTransactions` e factories
+que criem somente os registros usados pelo caso.
+
 ## Orquestrar a conversa
 
 Ao concluir esta etapa ou detectar trabalho de outra etapa, anuncie
@@ -57,9 +80,11 @@ Se o usuário não indicar o modo, use `prepare` quando a seção 14 ainda não 
      instalar ou configurar; recomende Vitest por padrão;
    - outra stack: preserve o runner de testes existente ou pergunte quando não houver
      decisão reproduzível.
-5. Em Node, considere a decisão materializada quando `package.json` expuser o
+5. Confira o ambiente e o comando com `check_database_safety.mjs`. Se o estado
+   não for `SAFE`, não execute teste algum e mantenha a etapa pendente.
+6. Em Node, considere a decisão materializada quando `package.json` expuser o
    script `test:tdd`; não escolha nem instale dependência silenciosamente.
-6. Leia `references/test-levels.md` para escolher o nível mais baixo que ainda prova o comportamento.
+7. Leia `references/test-levels.md` para escolher o nível mais baixo que ainda prova o comportamento.
 
 ## Usar o BDD para escrever TDD
 

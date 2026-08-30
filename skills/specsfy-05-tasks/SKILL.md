@@ -18,6 +18,23 @@ Modo de interação: `perguntas`.
 Antes de formular qualquer pergunta, leia e aplique o
 `Contrato de perguntas numeradas` de `.specsfy/Spec.md`.
 
+## Proteção do banco no plano
+
+Em projeto Laravel, execute
+`.agents/skills/specsfy-setup/scripts/check_database_safety.mjs --project
+<raiz>` antes de
+planejar ou liberar qualquer tarefa `[TEST]`. O plano precisa manter
+`.env.testing`, `APP_ENV=testing` e um banco de teste explicitamente diferente
+do banco do `.env`.
+
+Enquanto o resultado for `PENDING`, nenhuma tarefa de teste fica pronta e a
+skill não chama o runner. Quando o resultado for `IGNORED`, descarte o comando
+que apagaria estruturas ou registros. Nunca inclua `migrate:fresh`,
+`migrate:refresh`, `migrate:reset`, `migrate:rollback`, `db:wipe`,
+`schema:drop`, `prisma migrate reset`, `DROP DATABASE`, `DROP SCHEMA`,
+`DROP TABLE`, `TRUNCATE`, `RefreshDatabase`, `DatabaseMigrations` ou um
+equivalente em tarefa, teste, preparação, regressão ou Definition of Done.
+
 Preencha a seção `14. Tarefas` de `specs/<estado>/<NNNN>-<slug>/spec.md`. O arquivo permanece a única fonte da verdade; cada tarefa precisa ser pequena, verificável, ordenada e ligada a IDs definidos nele.
 
 ## Orquestrar a conversa

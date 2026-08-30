@@ -361,6 +361,22 @@ gates para contornar a etapa responsável. Após cada
 handoff, reavalie o estado canônico; se origem, destino e pendência se repetirem
 sem mudança observável, pare o ciclo e relate o impasse.
 
+### Proteção do banco de desenvolvimento
+
+Nenhuma etapa executa testes usando o banco de desenvolvimento. Em Laravel, o
+setup e cada skill que roda testes exigem `.env.testing`, `APP_ENV=testing` e
+um destino de banco explicitamente diferente do `.env`. Enquanto essa
+separação não estiver comprovada, nenhum teste focal, suíte ou regressão pode
+ser executado.
+
+Comandos que apagam, recriam ou zeram banco e schema são sempre ignorados. A
+recusa inclui `migrate:fresh`, `migrate:refresh`, `migrate:reset`,
+`migrate:rollback`, `db:wipe`, `schema:drop`, `prisma migrate reset`,
+`DROP DATABASE`, `DROP SCHEMA`, `DROP TABLE`, `TRUNCATE`,
+`RefreshDatabase`, `DatabaseMigrations` e equivalentes. Autorização da pessoa
+não remove essa proteção. Em Laravel, use `DatabaseTransactions` e factories
+restritas aos registros do caso.
+
 ## Três atos e estado
 
 - **Ato I — Definir:** intenção, requisitos e Gherkin; termina em

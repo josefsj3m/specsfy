@@ -372,6 +372,18 @@ class InterfaceContractTests(unittest.TestCase):
         self.assertIn("specsfy-specialist-reui", setup)
         self.assertIn("## Stack e especialistas instalados pelo setup", setup)
 
+    def test_setup_discovers_crud_menus_and_rebuilds_system_documentation(self) -> None:
+        setup = (ROOT / "specsfy-setup" / "SKILL.md").read_text(encoding="utf-8")
+        normalized = " ".join(setup.split())
+
+        self.assertIn("## Cobertura funcional obrigatória no setup", setup)
+        self.assertIn("criar, consultar, editar e apagar", normalized)
+        self.assertIn("menus do sistema", normalized)
+        self.assertIn("confirme com a pessoa", normalized)
+        self.assertIn("todo o sistema existente", normalized)
+        self.assertIn("em toda execução completa do setup", normalized.casefold())
+        self.assertIn("$specsfy-documentator", normalized)
+
     def test_reui_specialist_documents_free_registry_setup(self) -> None:
         reui = (ROOT.parent / "specialists" / "specsfy-specialist-reui" / "SKILL.md").read_text(encoding="utf-8")
         setup = (ROOT.parent / "specialists" / "specsfy-specialist-reui" / "references" / "setup.md").read_text(encoding="utf-8")

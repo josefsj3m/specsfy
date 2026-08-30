@@ -104,6 +104,12 @@ testes do módulo.
 selecionado. O comando transmite a saída e preserva o exit code. A TUI separa
 resumo e detalhes, mas usa o mesmo contrato.
 
+Para Laravel, `runProjectTests` valida `.env.testing`, compara o destino efetivo
+com o `.env` e procura `RefreshDatabase` ou `DatabaseMigrations` antes de criar
+o processo do Artisan. Qualquer pendência lança erro e mantém o runner sem
+execução. O teste desse contrato usa diretórios temporários e um executável PHP
+fictício, sem conexão com banco.
+
 O painel detalhado usa uma caixa rolável com o conteúdo acumulado. O componente
 `blessed.log` não deve ser usado nessa tela porque agenda a rolagem depois da
 renderização e tenta acessar o widget anterior quando uma nova linha recria a

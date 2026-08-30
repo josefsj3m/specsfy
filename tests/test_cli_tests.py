@@ -24,6 +24,14 @@ class CliTestRunnerContractTests(unittest.TestCase):
                 json.dumps({"require-dev": {"pestphp/pest": "^4.7"}}),
                 encoding="utf-8",
             )
+            (project / ".env").write_text(
+                "APP_ENV=local\nDB_CONNECTION=mysql\nDB_DATABASE=produto_dev\n",
+                encoding="utf-8",
+            )
+            (project / ".env.testing").write_text(
+                "APP_ENV=testing\nDB_DATABASE=produto_test\n",
+                encoding="utf-8",
+            )
             php = Path(commands) / "php"
             php.write_text(
                 "#!/bin/sh\n"

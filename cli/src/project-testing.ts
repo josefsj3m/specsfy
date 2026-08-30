@@ -3,7 +3,7 @@
  */
 
 import { spawn } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createInterface } from "node:readline";
 import { performance } from "node:perf_hooks";
@@ -57,6 +57,7 @@ export async function runProjectTests(
   signal?: AbortSignal,
 ): Promise<TestRun> {
   const command = await detectProjectTestCommand(project);
+  await assertSafeLaravelTestDatabase(command.cwd);
   const startedAt = performance.now();
   const lines: string[] = [];
   let structuredSummary: string[] = [];
@@ -94,6 +95,51 @@ export async function runProjectTests(
       ? structuredSummary
       : summaryLines(lines),
   };
+}
+
+/**
+ * Interrompe o runner antes do spawn quando Laravel não possui um banco de
+ * testes explícito e separado ou quando a suíte tenta recriar migrations.
+ */
+export async function assertSafeLaravelTestDatabase(root: string): Promise<void> {
+  const developmentPath = join(root, ".env");
+  const testingPath = join(root, ".env.testing");
+  if (!(await isFile(testingPath))) {
+    throw new Error(
+      "testes suspensos: crie .env.testing com um banco separado do .env",
+    );
+  }
+
+  const development = (await isFile(developmentPath))
+    ? parseEnvironment(await readFile(developmentPath, "utf8"))
+    : new Map<string, string>();
+  const testing = parseEnvironment(await readFile(testingPath, "utf8"));
+  if (testing.get("APP_ENV") !== "testing") {
+    throw new Error("testes suspensos: .env.testing exige APP_ENV=testing");
+  }
+  if (!testing.get("DB_DATABASE") && !testing.get("DB_URL")) {
+    throw new Error(
+      "testes suspensos: .env.testing deve declarar DB_DATABASE ou DB_URL",
+    );
+  }
+  const testingTarget = databaseTarget(testing, development);
+  const developmentTarget = databaseTarget(development);
+  if (developmentTarget && testingTarget === developmentTarget) {
+    throw new Error(
+      "testes suspensos: .env.testing aponta para o banco de desenvolvimento",
+    );
+  }
+
+  const testsPath = join(root, "tests");
+  if (!(await pathExists(testsPath))) return;
+  for (const path of await phpFiles(testsPath)) {
+    const source = await readFile(path, "utf8");
+    if (/\b(?:RefreshDatabase|DatabaseMigrations)\b/u.test(source)) {
+      throw new Error(
+        "testes suspensos: a suíte usa trait que pode recriar migrations",
+      );
+    }
+  }
 }
 
 /** Formata uma linha JSON estruturada do Pest ou preserva texto comum. */
@@ -168,6 +214,53 @@ async function usesPest(root: string): Promise<boolean> {
     }
   }
   return dependencies.has("pestphp/pest");
+}
+
+async function phpFiles(root: string): Promise<string[]> {
+  const found: string[] = [];
+  const pending = [root];
+  while (pending.length) {
+    const directory = pending.pop();
+    if (!directory) continue;
+    for (const entry of await readdir(directory, { withFileTypes: true })) {
+      const path = join(directory, entry.name);
+      if (entry.isDirectory()) pending.push(path);
+      else if (entry.isFile() && path.endsWith(".php")) found.push(path);
+    }
+  }
+  return found.sort();
+}
+
+function parseEnvironment(source: string): Map<string, string> {
+  const environment = new Map<string, string>();
+  for (const line of source.split(/\r?\n/u)) {
+    const match = /^\s*(?:export\s+)?([A-Z][A-Z0-9_]*)\s*=\s*(.*?)\s*$/u.exec(line);
+    if (!match?.[1] || match[2] === undefined) continue;
+    environment.set(match[1], unquote(match[2]));
+  }
+  return environment;
+}
+
+function databaseTarget(
+  environment: Map<string, string>,
+  fallback = new Map<string, string>(),
+): string {
+  const get = (name: string): string =>
+    environment.get(name) ?? fallback.get(name) ?? "";
+  const url = get("DB_URL");
+  if (url) return `url:${url}`;
+  return [get("DB_CONNECTION"), get("DB_HOST"), get("DB_PORT"), get("DB_DATABASE")].join("|");
+}
+
+function unquote(input: string): string {
+  if (
+    input.length >= 2 &&
+    ((input.startsWith('"') && input.endsWith('"')) ||
+      (input.startsWith("'") && input.endsWith("'")))
+  ) {
+    return input.slice(1, -1);
+  }
+  return input;
 }
 
 function summaryLines(lines: string[]): string[] {

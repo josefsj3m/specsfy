@@ -267,3 +267,37 @@ def then_interface_experience_requires_design_system(context) -> None:
 @then("o template Interface.md aponta para DESIGNSYSTEM.MD")
 def then_interface_template_points_to_design_system(context) -> None:
     assert "DESIGNSYSTEM.MD" in context.integration[2]
+
+
+@given("o contrato de setup do Specsfy")
+def given_setup_contract(context) -> None:
+    context.setup_contract = (
+        ROOT / "skills" / "specsfy-setup" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+
+
+@when("a cobertura funcional do setup é lida")
+def when_setup_functional_coverage_is_read(context) -> None:
+    context.setup_coverage = " ".join(context.setup_contract.split())
+
+
+@then("cada entidade de negócio tem a necessidade de CRUD verificada")
+def then_setup_checks_crud_need(context) -> None:
+    assert "criar, consultar, editar e apagar" in context.setup_coverage
+
+
+@then("cada tela aplicável tem um caminho pelos menus do sistema")
+def then_setup_maps_system_menus(context) -> None:
+    assert "menus do sistema" in context.setup_coverage
+    assert "item, o destino, a permissão" in context.setup_coverage
+
+
+@then("dúvidas sobre CRUD ou menus são confirmadas com a pessoa")
+def then_setup_confirms_unclear_crud_or_menus(context) -> None:
+    assert "confirme com a pessoa" in context.setup_coverage
+
+
+@then("a documentação técnica completa é reconstruída durante o setup")
+def then_setup_rebuilds_complete_documentation(context) -> None:
+    assert "todo o sistema existente" in context.setup_coverage
+    assert "$specsfy-documentator" in context.setup_coverage

@@ -53,6 +53,15 @@ grupos retornados antes de sugerir stack, especialista ou alteração. Em base
 grande, ela relata o conjunto lido por grupo e preserva convenções ainda não
 afetadas pela entrega.
 
+Na mesma leitura, o setup registra CRUD quando a jornada exige criar,
+consultar, editar e apagar registros. Ele também mapeia telas recorrentes para
+os menus do sistema, com destino, permissão e comportamento responsivo. Quando
+essa cobertura não estiver clara, a conversa faz uma pergunta numerada.
+
+Toda execução completa do setup chama `specsfy-documentator` para reconstruir
+`docs/` e `.specsfy/PACKAGES.md` a partir do sistema existente, mesmo sem uma
+alteração recente. Uma implementação repete o documentador ao final da tarefa.
+
 ## Ato I — Definir
 
 Antes do Ato I, a entrada possui duas camadas não normativas:

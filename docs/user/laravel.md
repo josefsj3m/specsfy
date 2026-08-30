@@ -68,17 +68,31 @@ são reaproveitados; dependências transitivas continuam relacionadas em
    alcançar persistência ou execução assíncrona, inclua transações,
    idempotência, filas, falhas e migrations.
 5. Derive testes para caminho feliz, autorização, validação, efeitos e falhas.
-6. Implemente controllers finos e mantenha as regras na camada já adotada pelo
+6. Antes de qualquer teste, crie `.env.testing` com `APP_ENV=testing` e um
+   `DB_DATABASE` ou `DB_URL` explícito, diferente do destino usado pelo `.env`.
+7. Implemente controllers finos e mantenha as regras na camada já adotada pelo
    projeto. Inspecione as consultas e o N+1 quando a quantidade de relações
    puder aumentar o tempo da resposta.
-7. Execute os checks existentes. Em Laravel com Pest, o CLI oferece:
+8. Confira o ambiente e o comando antes de executar os checks:
+
+```bash
+node .agents/skills/specsfy-setup/scripts/check_database_safety.mjs \
+  --project . --command "php artisan test"
+```
+
+Somente a saída `SAFE` permite continuar. `PENDING` encerra a etapa até a
+configuração ser corrigida. `IGNORED` descarta o comando, sem pedir autorização
+para forçá-lo.
+
+1. Em Laravel com Pest, o CLI oferece:
 
 ```bash
 specsfy test --project .
 ```
 
 O CLI detecta `artisan` e `pestphp/pest`, chama `php artisan test` e preserva o
-exit code. Ele não recebe uma string arbitrária de shell.
+exit code. Ele não recebe uma string arbitrária de shell. A verificação anterior
+continua obrigatória antes desse comando.
 
 ## O que o especialista acrescenta
 
@@ -101,6 +115,11 @@ instalada.
 - não aplique a skill a PHP sem Laravel.
 - não presuma APIs pela versão mais recente da documentação.
 - não execute migration, deploy ou comando operacional sem autorização.
+- não execute teste sem `.env.testing` separado do banco de desenvolvimento.
+- não use `RefreshDatabase`, `DatabaseMigrations`, `migrate:fresh`,
+  `migrate:refresh`, `migrate:reset`, `migrate:rollback` ou `db:wipe`; use
+  `DatabaseTransactions`, factories e limpeza limitada aos registros criados
+  pelo próprio caso.
 - não confie apenas na validação ou autorização da interface.
 
 Não use esse especialista para PHP sem Laravel nem para fixar uma versão que o

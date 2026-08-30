@@ -31,14 +31,16 @@ Implemente T003 da spec 0004 e valide a regressão.
 1. A skill confirma Definition Gate e Plan Gate aprovados.
 2. Para uma interface, confere as telas, menus, formulário, ações e estados definidos.
 3. Verifica a tarefa predecessora e o RED atual.
-4. Faz a menor mudança de produção, incluindo a tela e a interação previstas.
-5. Executa o teste focal até obter GREEN.
-6. Faz a revisão visual obrigatória quando a tarefa puder alterar a interface,
+4. Em Laravel, confirma `.env.testing` separado do `.env` e passa o comando
+   pelo `check_database_safety.mjs`. Sem `SAFE`, interrompe antes do teste.
+5. Faz a menor mudança de produção, incluindo a tela e a interação previstas.
+6. Executa o teste focal até obter GREEN.
+7. Faz a revisão visual obrigatória quando a tarefa puder alterar a interface,
    mesmo sem pedido específico. Confere bordas, espaçamentos, margens, padding,
    tipografia, alinhamento, largura, overflow, foco, zoom e conteúdo curto ou
    longo nos viewports e estados aplicáveis.
-7. Refatora sem alterar o comportamento.
-8. Executa a regressão e atualiza evidências:
+8. Refatora sem alterar o comportamento.
+9. Executa a regressão e atualiza evidências:
 
 ```text
 T003 [x] Implementar solicitação sem revelar existência do cadastro
@@ -69,6 +71,7 @@ consumidor. A execução só continua quando `docs/` estiver atualizado.
 - ampliar o escopo sem atualizar a spec.
 - implementar um CRUD como API sem os menus, as telas e o formulário aprovados.
 - marcar conclusão sem regressão.
+- rodar teste no banco do `.env` ou aceitar um comando que recrie o banco.
 - deixar `docs/`, `PROJECT.md` ou os arquivos `.specsfy/` incompatíveis com o
   código alterado.
 

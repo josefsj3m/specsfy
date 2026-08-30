@@ -136,8 +136,11 @@ Alterações em `specs/inbox/*.md`, `specs/backlog/*.md`,
 automaticamente.
 
 Em projetos Laravel com Pest, `specsfy test --project .` detecta `artisan` e
-`pestphp/pest`, executa `php artisan test` a partir da raiz selecionada,
-transmite a saída e devolve o mesmo exit code. Na TUI, `Executar testes ^X`
+`pestphp/pest`, mas só inicia `php artisan test` quando `.env.testing` declara
+um banco separado do `.env` e a suíte não usa traits que recriam migrations.
+Sem essa comprovação, o comando e a TUI encerram antes do processo PHP. Quando
+o gate passa, o CLI transmite a saída e devolve o mesmo exit code. Na TUI,
+`Executar testes ^X`
 mostra status, runner, comando, duração e resumo em uma subaba. A outra exibe
 cada teste e falha. Relatórios Pest estruturados são convertidos em linhas
 legíveis com arquivo, linha e mensagem.

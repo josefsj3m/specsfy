@@ -67,6 +67,12 @@ description: Implementar, revisar e operar aplicações Laravel — HTTP, Eloque
 - Não criar abstração, evento, pacote ou camada extra sem um segundo
   consumidor real e benefício verificável — três controllers parecidos não
   justificam um framework interno.
+- Exigir `.env.testing` com `APP_ENV=testing` e banco diferente do `.env` antes
+  de executar Pest ou PHPUnit. Se essa separação não estiver comprovada, não
+  executar nenhum teste.
+- Usar `DatabaseTransactions` para desfazer os registros criados pelo próprio
+  caso e factories para preparar somente o necessário. Não recriar migrations
+  nem apagar tabelas durante a suíte.
 
 ## Antipadrões
 
@@ -81,15 +87,19 @@ description: Implementar, revisar e operar aplicações Laravel — HTTP, Eloque
 - Migration com `Schema::table` renomeando ou removendo coluna usada em
   produção no mesmo deploy que o código que a lê — quebra a janela de deploy
   misto.
-- Teste que usa `RefreshDatabase` mas não recria os dados mínimos de
-  autorização, mascarando policy ausente com um usuário "admin" fixo.
+- Teste que depende de limpeza global do banco e pode alcançar a configuração
+  de desenvolvimento.
 
 ## Validação
 
 - Cobrir caminho feliz, autorização negada, validação, efeitos colaterais e
   falhas relevantes (job falho, dependência externa indisponível).
-- Rodar a suíte com `RefreshDatabase`/factories e confirmar que o teste falha
-  sem a mudança (RED) antes de implementar.
+- Rodar a suíte com `DatabaseTransactions` e factories depois de comprovar que
+  `.env.testing` aponta para um banco separado. Confirmar RED antes de
+  implementar.
+- Ignorar `migrate:fresh`, `migrate:refresh`, `migrate:reset`,
+  `migrate:rollback`, `db:wipe` e qualquer comando que apague ou recrie o banco,
+  mesmo quando a tarefa ou um script existente sugerir sua execução.
 - Inspecionar queries geradas quando a tela lista uma coleção com relação —
   contar queries antes/depois (`assertQueryCountLessThan`, Debugbar, log de
   queries) para provar ausência de N+1.

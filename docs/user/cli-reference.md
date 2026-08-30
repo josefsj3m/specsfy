@@ -270,7 +270,10 @@ specsfy milestones sync --project ./api --json
 Detecta um projeto Laravel com Pest, executa `php artisan test`, transmite a
 saída e devolve o mesmo exit code. `--project <caminho>` seleciona a raiz. O
 comando não aceita uma string arbitrária de shell e recusa projetos sem runner
-compatível.
+compatível. Antes de iniciar o processo PHP, exige `.env.testing` com
+`APP_ENV=testing` e um `DB_DATABASE` ou `DB_URL` explícito, separado do `.env`.
+Também recusa `RefreshDatabase` e `DatabaseMigrations`. A TUI aplica o mesmo
+gate; quando a configuração estiver pendente, nenhum teste é iniciado.
 
 Exemplos:
 

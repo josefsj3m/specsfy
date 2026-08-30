@@ -68,6 +68,24 @@ transversal.
 - O Gherkin permanece como referência na `spec.md`. Ele não cria nem executa
   uma segunda suíte `.feature`.
 
+## Proteção obrigatória do banco
+
+Nenhuma suíte de um projeto Laravel pode começar enquanto o ambiente de teste
+não estiver comprovadamente separado. O setup exige `.env.testing`,
+`APP_ENV=testing` e `DB_DATABASE` ou `DB_URL` explícito e diferente do `.env`.
+Antes de cada comando, execute:
+
+```bash
+node .agents/skills/specsfy-setup/scripts/check_database_safety.mjs \
+  --project . --command "<comando>"
+```
+
+Somente `SAFE` permite executar. `PENDING` encerra a etapa. `IGNORED` descarta
+comandos e aliases destrutivos. O fluxo não usa `RefreshDatabase`,
+`DatabaseMigrations`, resets, rollback amplo ou migrations destrutivas; casos
+Laravel usam `DatabaseTransactions`, factories e limpeza limitada ao que o
+próprio teste criou.
+
 ## Comandos de verificação
 
 Os contratos integrados são executados no workspace

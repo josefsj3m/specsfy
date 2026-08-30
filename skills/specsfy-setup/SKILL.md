@@ -98,6 +98,56 @@ Cada rodada apresenta uma pergunta, opções numeradas, `Escrever outra resposta
 Após a resposta, normalize o conteúdo, registre área, assunto, resposta, fonte,
 data e alcance em `.specsfy/USER-PROFILE.md`, e só então avance.
 
+## Cobertura funcional obrigatória no setup
+
+Durante a leitura do produto, relacione cada entidade de negócio às ações que a
+pessoa precisa executar. Quando a jornada exigir administrar registros,
+confirme a cobertura de criar, consultar, editar e apagar. Não force um CRUD
+para dados somente de leitura, históricos imutáveis, eventos ou informações
+mantidas por uma integração. Se as fontes não mostrarem quais ações são
+necessárias, confirme com a pessoa por meio de uma rodada do contrato numerado
+antes de registrar a cobertura.
+
+Para cada tela de uso recorrente, identifique como a pessoa chega até ela pelos
+menus do sistema e registre o item, o destino, a permissão e o comportamento
+responsivo em `INTERFACE.md`. Uma rota técnica, callback ou etapa acessada
+somente por redirecionamento pode ficar fora do menu quando a própria jornada
+comprovar esse acesso. Se não estiver claro se a tela recebe um link ou em qual
+menu ela aparece, confirme com a pessoa em uma única rodada antes de seguir.
+
+O setup registra essas necessidades no contexto persistente e encaminha
+qualquer mudança de comportamento para o backlog e a spec. Ele não cria telas,
+rotas ou persistência por conta própria. A implementação posterior deve cobrir
+o CRUD e os links confirmados, com tarefas e testes próprios.
+
+Em toda execução completa do setup, carregue `$specsfy-documentator` depois de
+reconciliar os contextos e especialistas. Reconstrua a documentação técnica de
+todo o sistema existente em `docs/` e `.specsfy/PACKAGES.md`, mesmo quando não
+houver mudança recente em aplicação, persistência ou dependências. Preserve
+texto humano fora dos blocos gerenciados e resolva qualquer resultado
+`PENDING` antes de encerrar.
+
+## Proteção do banco durante o setup
+
+Quando o projeto tiver `artisan`, execute durante o setup:
+
+```bash
+node .agents/skills/specsfy-setup/scripts/check_database_safety.mjs \
+  --project <raiz>
+```
+
+Exija `.env.testing` com `APP_ENV=testing` e um destino de banco declarado de
+forma explícita. O banco de teste precisa ser diferente do banco indicado no
+`.env`; não aceite valor ausente que faça o Laravel herdar a configuração de
+desenvolvimento. O script não mostra credenciais nem valores de conexão.
+
+Um resultado `PENDING` impede qualquer teste focal, suíte ou regressão. Corrija
+o ambiente de testes, execute a conferência novamente e só continue após
+`SAFE`. Nunca rode um teste usando o banco de desenvolvimento, nem mesmo para
+diagnóstico. Um resultado `IGNORED` indica comando ou configuração capaz de
+apagar estruturas ou registros; não execute o comando e não ofereça uma opção
+para forçar sua execução.
+
 1. Antes de ler ou escrever, confirme o diretório do projeto. Na primeira
    execução da conversa, se a pessoa já informou um caminho, resolva-o para um
    caminho absoluto e repita-o. Quando ela não informou, ofereça exatamente
@@ -139,6 +189,9 @@ data e alcance em `.specsfy/USER-PROFILE.md`, e só então avance.
    ```bash
    node scripts/monitor_context.mjs --project <raiz> --check
    ```
+
+   Em Laravel, executar também `check_database_safety.mjs --project <raiz>` e
+   manter toda execução de testes suspensa até o resultado `SAFE`.
 
 8. Inspecionar os arquivos iniciais, incluindo `.specsfy/USER-PROFILE.md`, e
    `.specsfy/PACKAGES.md` quando
@@ -182,9 +235,10 @@ data e alcance em `.specsfy/USER-PROFILE.md`, e só então avance.
 11. Para completar ou corrigir stack, regras ou dados, anunciar o handoff e
    carregar respectivamente `$specsfy-aux-stack`, `$specsfy-aux-rules` ou
    `$specsfy-aux-database`.
-12. Quando aplicação, persistência ou dependências mudar, carregar
-   `$specsfy-documentator` depois das auxiliares e reconstruir `docs/` e
-   `.specsfy/PACKAGES.md` a partir de todo o projeto.
+12. Em toda execução completa do setup, carregar `$specsfy-documentator`
+   depois das auxiliares e reconstruir `docs/` e `.specsfy/PACKAGES.md` a
+   partir de todo o projeto. Quando aplicação, persistência ou dependências
+   mudar durante outra etapa, repetir o documentador ao fim da implementação.
 13. Somente quando a pessoa solicitar ou indicar explicitamente o uso de
    Gitflow para o projeto (ver [references/gitflow.md](references/gitflow.md)),
    anunciar o handoff, carregar `$specsfy-specialist-gitflow` e registrar a

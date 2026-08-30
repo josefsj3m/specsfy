@@ -26,6 +26,28 @@ tarefa trouxer uma URL GitHub ou mudar Composer, carregue
 `$specsfy-specialist-laravel-package-manager` e reutilize pacotes já instalados
 quando eles atenderem ao requisito.
 
+## Proteção obrigatória do banco
+
+Antes de executar qualquer teste, suíte, regressão ou migration, rode:
+
+```bash
+node .agents/skills/specsfy-setup/scripts/check_database_safety.mjs \
+  --project <raiz> --command "<comando-pretendido>"
+```
+
+Em Laravel, exija `.env.testing`, `APP_ENV=testing` e um banco explicitamente
+diferente do banco de desenvolvimento definido no `.env`. Enquanto o estado
+for `PENDING`, não execute teste algum. Corrija o ambiente, repita a
+conferência e continue somente após `SAFE`.
+
+Ignore todo comando classificado como `IGNORED`. Não execute, não transforme em
+tarefa e não peça autorização para rodar `migrate:fresh`, `migrate:refresh`,
+`migrate:reset`, `migrate:rollback`, `db:wipe`, `schema:drop`,
+`prisma migrate reset`, `DROP DATABASE`, `DROP SCHEMA`, `DROP TABLE`,
+`TRUNCATE` ou equivalentes. A mesma recusa vale para scripts indiretos e para
+testes com `RefreshDatabase` ou `DatabaseMigrations`. Use isolamento
+transacional e fixtures mínimas sem apagar o banco.
+
 ## Revisão visual obrigatória
 
 Toda tarefa de desenvolvimento executa uma revisão visual, mesmo sem pedido da
@@ -85,7 +107,9 @@ exigindo autorização específica.
    `$specsfy-05-tasks`; não altere produção. Essa skill reabre o Ato II, chama
    TDD/BDD e retoma esta implementação depois de validar novamente o plano. Para
    outra falha, carregue automaticamente a skill responsável pelo gate.
-5. Execute a suite base relevante. Registre falhas preexistentes e não as atribua à nova mudança.
+5. Confira o comando da suíte base com `check_database_safety.mjs`. Execute-a
+   somente após `SAFE`; sem ambiente de teste separado, não rode nenhum teste.
+   Registre falhas preexistentes e não as atribua à nova mudança.
 6. Antes da primeira alteração de produção, defina `Status: Implementing`,
    `Delivery Gate: In Progress` e execute `specsfy transition <id> in-progress`.
 7. Selecione trabalho pronto com:
@@ -136,7 +160,9 @@ node .agents/skills/specsfy-setup/scripts/monitor_context.mjs \
 7. Para `[DOC]` ou `[OPS]`, produza a evidência específica pedida.
 8. Marque `EXECUTE` somente quando a entrega e a documentação exigida existirem
    nos caminhos declarados.
-9. Execute o teste TDD focal, a suite relacionada e checks estáticos;
+9. Confira novamente cada comando de teste com `check_database_safety.mjs`.
+   Execute o teste TDD focal, a suite relacionada e checks estáticos somente
+   após `SAFE`;
    marque `VERIFY` somente com o resultado esperado.
 10. Refatore somente com tudo verde.
 11. Registre comando, resultado e IDs nas seções 11–13 e então marque `EVIDENCE`.

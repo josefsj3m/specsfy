@@ -57,3 +57,11 @@ Feature: Governança de interface do Specsfy
     When o breadcrumb global é lido
     Then toda tela exibe equipe, módulo e tela atual
     And Laravel reaproveita o breadcrumb existente do layout
+
+  Scenario: Descobrir CRUD, menus e documentação durante o setup
+    Given o contrato de setup do Specsfy
+    When a cobertura funcional do setup é lida
+    Then cada entidade de negócio tem a necessidade de CRUD verificada
+    And cada tela aplicável tem um caminho pelos menus do sistema
+    And dúvidas sobre CRUD ou menus são confirmadas com a pessoa
+    And a documentação técnica completa é reconstruída durante o setup

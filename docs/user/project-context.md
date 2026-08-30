@@ -67,6 +67,24 @@ ficam fora da próxima rodada; perguntas técnicas recebem mais contexto para
 iniciantes e podem usar versões, arquitetura e integrações diretamente para
 pessoas experientes.
 
+O setup também verifica como você administra cada informação principal do
+produto. Quando a jornada precisa de cadastro e manutenção, ele confirma as
+ações de criar, consultar, editar e apagar. Informações somente de leitura,
+históricos imutáveis e conteúdos mantidos por integrações não recebem um CRUD sem
+necessidade. Se o código e os documentos não deixarem essa necessidade clara,
+o setup pergunta antes de registrar a cobertura.
+
+Para cada tela de uso recorrente, o setup identifica o caminho pelos menus do
+sistema. Ele registra item, destino, permissão e comportamento responsivo em
+`INTERFACE.md`. Rotas técnicas e etapas abertas apenas por redirecionamento
+podem ficar fora do menu. Quando o destino ou a presença do link estiverem
+abertos, você escolhe em uma pergunta numerada antes da continuação.
+
+Ao terminar a preparação dos contextos e especialistas, o setup executa
+`$specsfy-documentator`. Essa etapa reconstrói a documentação técnica de todo o
+sistema existente em `docs/` e atualiza `.specsfy/PACKAGES.md`, mesmo quando a
+execução não começou por uma alteração recente no código.
+
 Use `$specsfy-data-discovery` antes de implementar quando ainda faltar explicar
 o que o produto precisa guardar, quem consulta cada informação e quando ela
 deixa de ser necessária. A skill registra as respostas confirmadas em uma
