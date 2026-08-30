@@ -4,6 +4,43 @@ Todas as mudanças relevantes do Specsfy CLI são registradas neste arquivo.
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-08-30
+
+### Adicionado
+
+- Verifica durante o setup que projetos Laravel possuem `.env.testing` com
+  banco explícito e separado do ambiente de desenvolvimento.
+- Inclui um gate reutilizável que inspeciona comandos diretos, aliases de
+  Composer e npm, traits de teste e o método `up` das migrations antes da
+  execução.
+- Faz o setup confirmar cobertura de CRUD, caminhos de menu e reconstrução da
+  documentação técnica do sistema existente.
+
+### Corrigido
+
+- Suspende testes no CLI, na TUI e nas skills de TDD e implementação quando o
+  ambiente de teste não está comprovadamente separado.
+- Recusa resets, wipes, drops, truncates, `RefreshDatabase` e
+  `DatabaseMigrations`, sem permitir execução forçada.
+- Atualiza a aplicação de exemplo para usar SQLite exclusivo de teste,
+  migrations de avanço inspecionadas e `DatabaseTransactions`.
+
+### Documentação
+
+- Publica as regras de proteção no guia Laravel, na referência do CLI, nas
+  páginas das skills, na documentação técnica e no ebook `v1.7.20`.
+
+### Validação
+
+- `python3 -B -m unittest discover -s tests -p 'test_*.py'`
+- `uv run --quiet --with behave==1.3.3 behave tests/features --no-capture`
+- `cd skills && python3 -B -m unittest discover -s tests -p 'test_*.py'`
+- `cd specialists && python3 -B -m unittest discover -s tests -p 'test_*.py'`
+- `cd cli && npm run check`
+- `node skills/specsfy-setup/scripts/check_database_safety.mjs --project example --command 'composer test'`
+- `composer --working-dir=example test`
+- `make verify-ebook`
+
 ## [0.10.5] - 2026-08-27
 
 ## Correções
