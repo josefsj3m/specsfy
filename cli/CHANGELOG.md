@@ -4,6 +4,30 @@ Todas as mudanças relevantes do Specsfy CLI são registradas neste arquivo.
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-08-31
+
+### Adicionado
+
+- Exige `$specsfy-specialist-react-ui-components` no planejamento e na
+  implementação de telas React antes da escrita de JSX ou TSX.
+- Faz o setup instalar o especialista de componentes quando React for
+  detectado no projeto.
+- Adiciona um contrato automatizado para manter o roteamento presente nas
+  skills, nos templates e no especialista de experiência de interface.
+
+### Documentação
+
+- Atualiza os guias de tarefas, implementação e especialistas com a sequência
+  de seleção, reaproveitamento e adaptação de componentes.
+- Reconstrói o guia do usuário em PDF e EPUB com as fontes documentais atuais.
+
+### Validação
+
+- `python3 -B -m unittest discover -s tests -p 'test_*.py'`
+- `uv run --quiet --with behave behave tests/features --no-capture`
+- `cd skills && node specsfy-04-validate/scripts/verify_repo.mjs . --boundary local`
+- `make verify-ebook`
+
 ## [0.11.0] - 2026-08-30
 
 ### Adicionado
