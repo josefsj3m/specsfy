@@ -4,6 +4,22 @@ Todas as mudanças relevantes do Specsfy CLI são registradas neste arquivo.
 
 ## [Unreleased]
 
+## [0.11.2] - 2026-08-31
+
+### Corrigido
+
+- Declara no especialista de componentes React a relação recíproca com o
+  especialista de experiência de interface.
+- Restaura os contratos Python e BDD do catálogo de especialistas após a
+  publicação do roteamento obrigatório para componentes de UI.
+
+### Validação
+
+- `cd specialists && python3 -B -m unittest discover -s tests -p 'test_*.py'`
+- `cd specialists && uv run --quiet --with behave==1.3.3 behave tests/features --no-capture`
+- `cd skills && python3 -B -m unittest discover -s tests -p 'test_*.py'`
+- `cd skills && uv run --quiet --with behave==1.3.3 behave tests/features --no-capture`
+
 ## [0.11.1] - 2026-08-31
 
 ### Adicionado
