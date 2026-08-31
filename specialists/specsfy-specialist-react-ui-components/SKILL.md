@@ -109,6 +109,8 @@ uma escolha incremental, ler
 
 ## Skills relacionadas
 
+- `$specsfy-specialist-interface-experience` organiza a descoberta e a entrega
+  completa da tela antes da seleção dos componentes React.
 - `$specsfy-specialist-shadcn-ui` identifica a base de primitives e fornece
   componentes adaptáveis; esta skill fornece composições TSX copiáveis, não
   uma dependência runtime.
