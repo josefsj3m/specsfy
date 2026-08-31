@@ -280,6 +280,25 @@ class InterfaceContractTests(unittest.TestCase):
         self.assertIn("menus e navegação principal", sources["specsfy-07-implement"])
         self.assertIn("CRUD somente como API", sources["specsfy-07-implement"])
 
+    def test_screen_work_requires_the_ui_component_specialist(self) -> None:
+        tasks = (ROOT / "specsfy-05-tasks" / "SKILL.md").read_text(encoding="utf-8")
+        implement = (ROOT / "specsfy-07-implement" / "SKILL.md").read_text(encoding="utf-8")
+        task_template = (ROOT / "templates" / "Tasks.md").read_text(encoding="utf-8")
+        interface_experience = (
+            ROOT.parent
+            / "specialists"
+            / "specsfy-specialist-interface-experience"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        specialist = "$specsfy-specialist-react-ui-components"
+        self.assertIn(specialist, tasks)
+        self.assertIn(specialist, implement)
+        self.assertIn(specialist, task_template)
+        self.assertIn(specialist, interface_experience)
+        self.assertIn("antes de escrever JSX ou TSX", implement)
+        self.assertIn("não implemente a tela", implement)
+
     def test_requires_an_interface_phase_when_the_spec_declares_screens(self) -> None:
         base = """| Interface para pessoas | Sim |
 
@@ -369,6 +388,7 @@ class InterfaceContractTests(unittest.TestCase):
         self.assertIn("specsfy-specialist-data-modeling", setup)
         self.assertIn("specsfy-specialist-domain-modeling", setup)
         self.assertIn("specsfy-specialist-software-architecture", setup)
+        self.assertIn("specsfy-specialist-react-ui-components", setup)
         self.assertIn("specsfy-specialist-reui", setup)
         self.assertIn("## Stack e especialistas instalados pelo setup", setup)
 

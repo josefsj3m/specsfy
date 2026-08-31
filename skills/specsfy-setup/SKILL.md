@@ -274,7 +274,7 @@ pendente.
 | Supabase | `specsfy-specialist-supabase` |
 | PostgreSQL | `specsfy-specialist-postgres` |
 | Redis | `specsfy-specialist-redis` |
-| React | `specsfy-specialist-react` |
+| React | `specsfy-specialist-react` e `specsfy-specialist-react-ui-components` |
 | Astro | `specsfy-specialist-astro` |
 | Next.js | `specsfy-specialist-nextjs` |
 | TypeScript | `specsfy-specialist-typescript` |

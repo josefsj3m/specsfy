@@ -47,6 +47,10 @@ Uma tarefa de API ou persistência não substitui essas tarefas.
 
 Essas tarefas ficam em uma `Fase de interface` dedicada. Há uma tarefa por tela
 registrada, usando os componentes e a stack já existentes no projeto.
+Em projetos React, o `PREP` de cada tarefa carrega
+`$specsfy-specialist-react-ui-components` antes da escrita de JSX ou TSX. Se o
+especialista estiver ausente, o fluxo retorna ao setup para instalar a skill
+detectada antes de liberar o código da tela.
 
 Depois de registrar as tarefas, a skill chama `specsfy-06-tdd-bdd` para
 materializar os testes. O Plan Gate só pode ser aprovado quando todos os

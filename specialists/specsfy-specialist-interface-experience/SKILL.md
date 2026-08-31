@@ -49,10 +49,12 @@ description: Analisar o sistema atual e orientar a descoberta, o plano e a entre
    link para o detalhe.
 6. Criar na seção 14 a `Fase de interface`, com uma tarefa por tela e testes
    para navegação, formulário, validações, feedback e teclado.
-7. Chamar `$specsfy-specialist-ux-design` para jornada,
-   `$specsfy-specialist-ui-design` para composição e o especialista da stack
-   detectada para implementação. `$specsfy-specialist-react` só se aplica a
-   projetos React.
+7. Chamar `$specsfy-specialist-ux-design` para jornada e
+   `$specsfy-specialist-ui-design` para composição. Em projetos React, carregar
+   `$specsfy-specialist-react-ui-components` para selecionar, reaproveitar e
+   adaptar componentes antes de escrever JSX ou TSX, além de
+   `$specsfy-specialist-react` para a implementação da stack. Para outra
+   tecnologia, carregar o especialista equivalente detectado pelo setup.
 
 ## Resultado esperado
 
@@ -105,6 +107,8 @@ preserva tudo fora do alcance registrado.
 
 - `$specsfy-specialist-ux-design` para jornada, tarefas e conteúdo.
 - `$specsfy-specialist-ui-design` para composição visual e estados.
+- `$specsfy-specialist-react-ui-components` para selecionar e reaproveitar
+  componentes nas telas React.
 - `$specsfy-specialist-design-system` para regras macro, defaults e cenários
   CRUD.
 

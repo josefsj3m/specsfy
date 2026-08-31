@@ -101,6 +101,11 @@ das seções `14. Tarefas` e `15. Ordem de execução` em
   shadcn/ui e ReUI ou rotas reais. Inclua uma tarefa para atualizar
   `INTERFACE.md` com finalidade, arquivo, API, estados, consumidores e regra
   de reaproveitamento de todos os blocos criados ou alterados.
+  Em projetos React, cada tarefa de tela deve registrar no `PREP` o uso de
+  `$specsfy-specialist-react-ui-components` antes da implementação. A skill
+  orienta a busca, o reaproveitamento e a adaptação dos componentes reais do
+  projeto. Se ela não estiver instalada, retorne ao `$specsfy-setup` para
+  instalar o especialista detectado antes de liberar a tarefa `[CODE]`.
   Agrupe-as na subseção obrigatória `#### Fase de interface` da seção 14. Cada
   tela registrada recebe ao menos uma tarefa própria; não esconda essa entrega
   dentro de uma tarefa genérica de backend.

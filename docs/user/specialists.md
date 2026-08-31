@@ -133,6 +133,12 @@ cada spec com interface usa a mesma relação para declarar os blocos React e os
 componentes shadcn/ui e ReUI escolhidos. As tarefas de interface atualizam o
 mapa antes de serem concluídas.
 
+Antes de desenvolver uma tela React, o planejamento e a implementação carregam
+`$specsfy-specialist-react-ui-components`. A skill procura primeiro os blocos
+existentes, orienta o reaproveitamento ou a adaptação e mantém `INTERFACE.md`
+alinhado ao código. Se ela ainda não estiver instalada, o fluxo retorna ao
+setup e instala o especialista detectado antes de escrever JSX ou TSX.
+
 Nas superfícies CRUD, a regra padrão é `PageHeader` e `DataGrid` para listas,
 com a linha inteira abrindo o detalhe por clique ou teclado; `PageHeader` e
 `DetailLists` para detalhes; e `PageHeader` com seções de formulário em duas

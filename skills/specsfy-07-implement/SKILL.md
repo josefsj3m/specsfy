@@ -98,6 +98,10 @@ exigindo autorização específica.
    Antes de programar, confirme os itens escolhidos na tabela da seção 10 e em
    `INTERFACE.md`; depois de programar, atualize `INTERFACE.md` com todos os
    blocos criados, alterados ou reaproveitados.
+   Em projeto React, carregue obrigatoriamente
+   `$specsfy-specialist-react-ui-components` antes de escrever JSX ou TSX.
+   Se a skill não estiver instalada, retorne ao `$specsfy-setup` para instalar
+   o especialista detectado e não implemente a tela até concluir esse preparo.
    Para um CRUD, confirme também um único `PageHeader` reutilizável em todas as
    telas, `DataGrid` em largura total, coluna `ID` sempre visível, link da linha
    para o detalhe e botões de editar e apagar independentes na linha.
@@ -137,6 +141,9 @@ Se não houver tarefa pronta, diferencie `concluído` de `bloqueado por dependê
    Para uma tarefa de interface, implemente a tela, os menus, o formulário e a interação
    definidos na spec com os estados descritos; não substitua o fluxo por uma
    rota de API, um componente vazio ou um atalho sem a tela acordada.
+   Em React, siga `$specsfy-specialist-react-ui-components` para localizar,
+   reaproveitar, adaptar e registrar os componentes antes de criar uma nova
+   composição.
 5. Depois de alterar produção e antes de marcar `EXECUTE`, monitore o contexto:
 
 ```bash
