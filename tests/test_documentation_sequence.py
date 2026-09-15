@@ -39,6 +39,7 @@ PEDAGOGICAL_ORDER = (
     "docs/user/specialists.md",
     "docs/user/deploy.md",
     "docs/user/deploy-operations.md",
+    "docs/user/deploy-vault.md",
     "docs/user/advanced-usage.md",
     "docs/user/laravel.md",
     "docs/user/astro.md",

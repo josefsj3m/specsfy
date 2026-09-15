@@ -64,10 +64,14 @@ versionamento e valide a referência novamente antes do push e antes do
 
 Não grave senha, token ou chave na stack. Pergunte quais nomes a aplicação
 consome, registre-os em `ansible/vault-fields.txt` e execute
-`ansible/create-vault.sh`. O utilitário solicita a senha do Vault e cada valor
-com entrada oculta, depois adiciona as variáveis criptografadas ao `vault.yml`.
+`ansible/create-vault.sh`. O utilitário usa a fonte externa configurada ou
+solicita a senha do Vault no terminal. Cada valor novo entra com entrada oculta,
+depois as variáveis criptografadas são adicionadas ao `vault.yml`.
 Não aceite esses valores na conversa ou como argumento de linha de comando.
 Uma nova execução ignora campos já presentes e solicita somente os ausentes.
+
+Leia [vault.md](vault.md) para cadastro externo, uso manual, execução pelo
+agente, precedência das fontes e atualização de scripts existentes.
 
 No padrão Cloudflare Tunnel, trate o token como `vault_cloudflare_tunnel_token`.
 O Ansible cria o Docker Secret externo `cloudflare_tunnel_token`, e o serviço

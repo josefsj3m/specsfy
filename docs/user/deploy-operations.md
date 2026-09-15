@@ -25,6 +25,7 @@ meu-projeto/
     ├── inventory.example.yml
     ├── check-hosts.py
     ├── create-vault.sh
+    ├── vault.py
     ├── deploy.yml
     ├── keys.yml
     ├── sync-keys.yml
@@ -160,7 +161,9 @@ não remove o acesso de outra máquina administrativa.
 | `./deploy check-hosts` | listar o inventário e testar conexões | nenhum |
 | `./deploy secrets` | incluir campos ausentes | atualiza o Vault |
 | `./deploy sync-keys` | autorizar chaves `.pub` | atualiza os hosts |
-| `./deploy run` | aplicar o playbook | atualiza Swarm e stack |
+| `./deploy run` | aplicar o playbook com senha manual | atualiza Swarm e stack |
+| `./deploy configure-vault` | cadastrar senha externa | grava arquivo local fora do Git |
+| `./deploy run --non-interactive` | publicar com fonte de senha pronta | atualiza Swarm e stack |
 
 O inventário padrão é `ansible/inventory.yml`. Para conferir outro arquivo sem
 alterar o projeto, defina `ANSIBLE_INVENTORY` somente para aquela execução.
@@ -181,8 +184,11 @@ ANSIBLE_INVENTORY=ansible/inventory.staging.yml ./deploy check-hosts
 `check-hosts` não recebe senhas como argumentos. `secrets` abre prompts ocultos
 e não aceita valores pela linha de comando. `sync-keys` recusa continuar quando
 não encontra uma chave pública local. `run` testa as conexões antes do playbook
-e solicita a senha do Vault no próprio terminal quando ela for necessária.
+e solicita a senha do Vault no próprio terminal no modo manual.
 
 Volte ao capítulo [Como funciona o Deploy da aplicação](deploy.md) para
 acompanhar build, publicação, rollout, migrations, rollback e conferência da
 versão ativa.
+
+O capítulo [Senha do Vault e deploy pela IA](deploy-vault.md) explica o
+cadastro externo, os dois modos de execução e a migração de scripts existentes.

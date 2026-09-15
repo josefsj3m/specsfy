@@ -97,7 +97,39 @@ mantém a interface humana curta e encaminha cada ação para a implementação 
 | `check-hosts` | `check-hosts.py` | mostra hosts e testa conexões |
 | `secrets` | `create-vault.sh` | inclui valores ausentes no Vault |
 | `sync-keys` | `sync-keys.yml` e `keys.yml` | inclui chaves `.pub` |
-| `run` | `check-hosts.py` e `deploy.yml` | confere e publica a stack |
+| `configure-vault` | `vault.py` | cadastra a senha fora do repositório |
+| `run` | `vault.py`, `check-hosts.py` e `deploy.yml` | confere e publica a stack |
+
+`run` sem opções mantém o prompt oculto. `run --non-interactive` resolve fontes
+explícitas, configuração nativa via `ansible-config` e cadastro local, nessa
+ordem. O utilitário remove prompts herdados do ambiente e executa subprocessos
+sem stdin nem terminal controlador. O preflight local força a descriptografia
+com `to_json(vault_to_text=True)` e `no_log`, pois carregar o inventário não
+descriptografa necessariamente todas as strings. Uma falha nessa etapa ocorre
+antes das conexões e não tenta outra fonte.
+
+`configure-vault` deriva o destino externo do caminho real do checkout,
+respeita `XDG_CONFIG_HOME`, recusa destinos internos e links simbólicos e grava
+com substituição atômica. A pasta recebe `700` e o arquivo `600` antes da
+publicação. O cadastro humano exige confirmação antes de sobrescrever e não
+altera o Vault criptografado. A senha manual usa temporário `600`, removido ao
+final do contexto de execução. `secrets` compartilha a resolução de fontes e
+preserva o YAML anterior quando um campo novo falha.
+
+Os assets `deploy.sh`, `create-vault.sh` e `vault.py` são copiados pelo scaffold.
+Projetos existentes precisam de migração por diff dos quatro utilitários,
+incluindo `check-hosts.py`; o gerador continua recusando sobrescrita. O manual
+de [operações de deploy](../user/deploy-vault.md) documenta cada comando,
+suas opções, permissões, falhas e exemplos.
+
+Os testes `specialists/tests/test_deploy_vault.py` usam Ansible real com um
+playbook local descartável e um terminal PTY. Cobrem arquivo, script, ambiente,
+`ansible.cfg`, Vault ID, prompt manual, cadastro, permissões e falhas antes das
+conexões. O BDD reutiliza esses contratos. A suíte integrada compara as opções
+do parser com o manual e exige cinco exemplos por comando.
+
+O job de especialistas instala ShellCheck e `ansible-core==2.19.4` antes das
+suítes, para executar os mesmos contratos de terminal e descriptografia no CI.
 
 `ANSIBLE_INVENTORY` seleciona um inventário alternativo somente para o
 processo atual. Sem a variável, o wrapper exige

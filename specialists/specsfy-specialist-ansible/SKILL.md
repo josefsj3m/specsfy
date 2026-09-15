@@ -1,6 +1,6 @@
 ---
 name: specsfy-specialist-ansible
-description: "Criar e revisar automação Ansible idempotente, segura e testável com inventários, variables, roles, handlers, Vault e execução controlada. Use para playbooks, roles, collections, inventories, ansible.cfg ou automação de hosts; use também para revisar idempotência de uma role existente; não execute contra produção sem alvo e autorização explícitos, e para orquestração de containers em cluster use `$specsfy-specialist-docker-swarm`."
+description: Criar e revisar playbooks, roles e Vault com Ansible. Use para automação de hosts; para deploy completo, use specsfy-specialist-deploy.
 ---
 
 # Ansible
@@ -11,7 +11,7 @@ description: "Criar e revisar automação Ansible idempotente, segura e testáve
   ou `requirements.yml`/`galaxy.yml` de collections.
 - Acionar também para revisar se uma automação existente é realmente
   idempotente antes de rodá-la contra um ambiente compartilhado.
-- Não acionar para orquestrar serviços já containerizados em cluster — usar
+- Não acionar para orquestrar serviços já containerizados em cluster; usar
   `$specsfy-specialist-docker-swarm` nesse caso; Ansible aqui entra no
   provisionamento do host, não na orquestração de serviços do Swarm.
 - Combinar com `$specsfy-specialist-delivery-engineering` quando a execução
@@ -19,10 +19,14 @@ description: "Criar e revisar automação Ansible idempotente, segura e testáve
 
 ## Fluxo
 
+Apresente o plano, informe o progresso e termine com arquivos alterados e
+validações executadas. Para texto público, siga o Contrato Editorial
+Compartilhado aplicável ao projeto consumidor.
+
 1. Em release ou deploy completo, trabalhar sob
    `$specsfy-specialist-deploy` e usar o `SEMVER`, a imagem e os manifestos já
    preparados pela orquestradora.
-1. Confirmar inventário, grupos, ambiente-alvo, método de conexão e escopo
+1. Confirmar hosts, grupos, ambiente-alvo, método de conexão e escopo
    exato de hosts antes de qualquer execução com efeito.
 1. Usar `./deploy check-hosts` para apresentar todos os hosts em tabela e
    confirmar o módulo `ping` antes da primeira task remota. Usar
@@ -35,13 +39,18 @@ description: "Criar e revisar automação Ansible idempotente, segura e testáve
    responsabilidade por role.
 1. Proteger secrets com Ansible Vault ou um provedor externo (lookup em
    cofre gerenciado); nunca em texto plano no repositório.
+1. Para execução pelo agente, usar `./deploy run --non-interactive` sob a
+   orquestradora de deploy. Respeitar arquivo, script, Vault IDs e configuração
+   nativa já fornecidos. Sem fonte externa, orientar `./deploy configure-vault`
+   no terminal humano. Não pedir ou ler a senha pela conversa. O comando
+   `./deploy run` permanece manual, com entrada oculta.
 1. Validar sintaxe, `ansible-lint`, check mode e diff sem revelar segredos no
    output.
 1. Testar a role em ambiente descartável e repetir a mesma execução para
    provar que a segunda rodada não relata `changed`.
 1. Aplicar em produção com serialização (`serial`), limites (`--limit`) e
-   critério de parada (`max_fail_percentage`/`any_errors_fatal`) compatíveis
-   com o risco da mudança.
+   regra de parada (`max_fail_percentage`/`any_errors_fatal`) compatíveis
+   com o alcance da mudança.
 
 ## Padrões
 
@@ -70,20 +79,20 @@ description: "Criar e revisar automação Ansible idempotente, segura e testáve
 - Fixar collections em `requirements.yml` com versão e validar a matriz de
   compatibilidade com o `ansible-core` instalado antes de atualizar.
 - Usar `changed_when`/`failed_when` apenas para representar a semântica real
-  do comando — nunca para silenciar uma falha genuína ou fingir idempotência
+  do comando; nunca para silenciar uma falha genuína ou fingir idempotência
   em um `shell`/`command` que sempre relata mudança.
 - Restringir privilégio (`become` só na task que precisa) e usar `no_log:
   true` em qualquer task que manipule segredo, mesmo que o valor pareça
   inofensivo no log.
-- Não depender da ordem acidental do inventário ou da execução paralela
+- Não depender da ordem acidental dos hosts ou da execução paralela
   padrão quando a task tiver efeito colateral entre hosts (ex.: um serviço
-  que só um host por vez pode reiniciar) — usar `serial` e `throttle`
+  que só um host por vez pode reiniciar); usar `serial` e `throttle`
   explicitamente nesses casos.
 
 ## Antipadrões
 
 - `shell`/`command` sem `creates`, `removes` ou `changed_when` explícito: a
-  task relata `changed` toda vez, mesmo quando o estado final é idêntico —
+  task relata `changed` toda vez, mesmo quando o estado final é idêntico;
   isso quebra a leitura de "o que realmente mudou" em uma execução e mascara
   uma automação não idempotente.
 - Handler notificado incondicionalmente (fora de uma task que só dispara
@@ -104,14 +113,14 @@ description: "Criar e revisar automação Ansible idempotente, segura e testáve
   --diff` (check mode) antes de qualquer aplicação real, confirmando que o
   diff não expõe segredo.
 - Duas execuções consecutivas no mesmo alvo: a segunda não deve relatar
-  nenhuma task como `changed` — essa é a prova operacional de idempotência,
+  nenhuma task como `changed`; essa é a prova operacional de idempotência,
   não uma inspeção visual do código.
 - Testes de handlers (o serviço realmente reinicia quando deveria), de
   templates (renderização correta por ambiente) e de falha parcial
   (`any_errors_fatal`, `max_fail_percentage` se comportam como esperado
   quando um host falha no meio do batch).
 - Confirmação explícita do inventory e do `--limit` usados antes de qualquer
-  mutação remota — nunca aceitar "rodar em todos os hosts" como default
+  mutação remota; nunca aceitar "rodar em todos os hosts" como default
   silencioso.
 - Não declarar uma role "idempotente" ou "segura" sem as duas execuções
   consecutivas e o check mode acima; a leitura do playbook não substitui a
@@ -124,7 +133,7 @@ description: "Criar e revisar automação Ansible idempotente, segura e testáve
 - `$specsfy-specialist-versioning` mantém `SEMVER` alinhado à imagem e aos
   manifestos transportados pela automação.
 - `$specsfy-specialist-docker-swarm` quando o host provisionado por Ansible
-  entra em um cluster Swarm — Ansible prepara o node, Swarm orquestra os
+  entra em um cluster Swarm; Ansible prepara o node, Swarm orquestra os
   serviços dentro dele.
 - `$specsfy-specialist-delivery-engineering` quando a execução do playbook é
   uma etapa de pipeline com promoção entre ambientes.

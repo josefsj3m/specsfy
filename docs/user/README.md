@@ -144,6 +144,8 @@ integração ou tecnologia específica:
 - [Servidores e comandos de deploy](deploy-operations.md), para cadastrar
   servidores, conferir conexões, sincronizar chaves públicas e usar os comandos
   curtos no Herdr.
+- [Senha do Vault e deploy pela IA](deploy-vault.md), para configurar a senha
+  fora do Git e alternar entre execução manual e automatizada.
 - [Uso avançado](advanced-usage.md), para automação e integrações.
 - aplicação em projetos [Laravel](laravel.md), [Astro](astro.md) ou
   [Next.js](nextjs.md).

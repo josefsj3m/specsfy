@@ -54,6 +54,13 @@ públicas para a conta `deploy` e chama Docker Swarm, Ansible e os demais
 especialistas necessários. O projeto consumidor recebe o wrapper `./deploy`
 com as ações `check-hosts`, `secrets`, `sync-keys` e `run`.
 
+O comando `./deploy run` mantém a senha manual no terminal. Para execução pela
+IA, prepare uma fonte externa com `./deploy configure-vault` e use
+`./deploy run --non-interactive`. Arquivos, scripts de cofre e configurações
+nativas do Ansible também são aceitos. O guia de
+[operações de deploy](../docs/user/deploy-vault.md) explica cadastro,
+permissões, troca, remoção e migração dos scripts existentes.
+
 Nenhuma skill deste módulo é instalada ou executada pela raiz do
 [`promovaweb/specsfy`](https://github.com/promovaweb/specsfy).
 

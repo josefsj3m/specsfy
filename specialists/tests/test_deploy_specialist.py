@@ -74,6 +74,7 @@ class DeploySpecialistTests(unittest.TestCase):
                 "ansible/group_vars/all.yml",
                 "ansible/vault-fields.txt",
                 "ansible/create-vault.sh",
+                "ansible/vault.py",
                 "ansible/check-hosts.py",
                 "ansible/templates/stack.yaml.j2",
             )
@@ -128,10 +129,11 @@ class DeploySpecialistTests(unittest.TestCase):
             deploy_utility = (project / "deploy").read_text(encoding="utf-8")
             self.assertIn("check-hosts.py", deploy_utility)
             self.assertIn("check-hosts)", deploy_utility)
-            self.assertGreaterEqual(deploy_utility.count("check-hosts.py"), 3)
+            self.assertIn('"$base_dir/ansible/vault.py"', deploy_utility)
             self.assertIn('"$base_dir/ansible/create-vault.sh"', deploy_utility)
             self.assertIn("sync-keys.yml", deploy_utility)
-            self.assertIn("deploy.yml", deploy_utility)
+            vault_helper = (project / "ansible/vault.py").read_text(encoding="utf-8")
+            self.assertIn("ansible/deploy.yml", vault_helper)
             keys = (project / "ansible/keys.yml").read_text(encoding="utf-8")
             self.assertIn("query('ansible.builtin.fileglob'", keys)
             self.assertIn("ansible.posix.authorized_key", keys)
@@ -147,10 +149,10 @@ class DeploySpecialistTests(unittest.TestCase):
             vault_utility = (project / "ansible/create-vault.sh").read_text(
                 encoding="utf-8"
             )
-            self.assertIn("encrypt_string", vault_utility)
-            self.assertIn("vault-fields.txt", vault_utility)
-            self.assertIn("getpass", vault_utility)
-            self.assertIn('grep -q "^${field}:"', vault_utility)
+            self.assertIn('"$base_dir/vault.py" secrets', vault_utility)
+            self.assertIn("encrypt_string", vault_helper)
+            self.assertIn("vault-fields.txt", vault_helper)
+            self.assertIn("getpass", vault_helper)
             self.assertNotIn(': > "$vault_file"', vault_utility)
 
             shellcheck = shutil.which("shellcheck")

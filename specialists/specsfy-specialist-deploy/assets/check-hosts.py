@@ -51,9 +51,14 @@ def main() -> int:
     """Carrega o inventário, testa os hosts e imprime uma tabela."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--inventory", required=True)
+    parser.add_argument("--vault-password-file")
+    parser.add_argument("--vault-id", action="append", default=[])
     args = parser.parse_args()
+    vault_args = ["--vault-password-file", args.vault_password_file] if args.vault_password_file else []
+    for identity in args.vault_id:
+        vault_args.extend(["--vault-id", identity])
 
-    loaded = execute(["ansible-inventory", "-i", args.inventory, "--list"])
+    loaded = execute(["ansible-inventory", "-i", args.inventory, "--list", *vault_args])
     if loaded.returncode != 0:
         print(loaded.stderr.strip())
         return loaded.returncode
@@ -61,7 +66,7 @@ def main() -> int:
     data = json.loads(loaded.stdout)
     hosts = inventory_hosts(data)
     tested = execute(
-        ["ansible", "all", "-i", args.inventory, "-m", "ping", "-o"]
+        ["ansible", "all", "-i", args.inventory, "-m", "ping", "-o", *vault_args]
     )
     states = connection_states(tested.stdout + "\n" + tested.stderr)
     hostvars = data.get("_meta", {}).get("hostvars", {})

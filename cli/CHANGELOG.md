@@ -4,6 +4,33 @@ Todas as mudanças relevantes do Specsfy CLI são registradas neste arquivo.
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-09-15
+
+### Adicionado
+
+- Mantém o deploy manual e adiciona `./deploy run --non-interactive` para
+  execução por agentes com fontes externas da senha do Ansible Vault.
+- Inclui `./deploy configure-vault` com entrada oculta, armazenamento fora do
+  Git, permissões restritas e confirmação antes de substituir a senha.
+- Aceita arquivos, scripts de cofre, Vault IDs e configuração nativa do Ansible.
+- Reaproveita a fonte externa no cadastro de segredos e verifica a
+  descriptografia local antes de conectar aos servidores.
+- Documenta configuração, troca, remoção e migração de projetos existentes,
+  com testes de terminal e Ansible em alvo local descartável.
+
+### Migração
+
+- Projetos existentes devem incorporar as mudanças em `deploy`,
+  `ansible/create-vault.sh` e `ansible/check-hosts.py`, além do novo
+  `ansible/vault.py`, preservando suas personalizações. Depois, execute
+  `./deploy configure-vault` no terminal humano para preparar a fonte local.
+
+### Validação
+
+- 113 testes integrados, 38 testes de especialistas e 106 testes do CLI.
+- 54 cenários BDD integrados e 12 cenários dos especialistas.
+- ShellCheck, validação das skills, `make verify-ebook` e `make verify-version`.
+
 ## [0.22.2] - 2026-09-04
 
 ### Corrigido

@@ -28,7 +28,7 @@ sem alterações e conserva o valor depois do reboot.
   `group_vars`/`host_vars`, nunca em lógica duplicada dentro da role.
 - Fixe collections e `ansible-core` em `requirements.yml` e
   `ansible.cfg`/`collections/requirements.yml` com versão mínima e máxima
-  conhecida — uma collection nova pode mudar o comportamento default de um
+  conhecida; uma collection nova pode mudar o comportamento default de um
   módulo entre versões.
 - Use `tags` com semântica operacional real (`tags: [migration, restart]`)
   para permitir execução seletiva (`--tags`/`--skip-tags`); não use tags como
@@ -48,7 +48,7 @@ tem ~22 níveis):
 7. Variáveis de linha de comando (`-e`/`--extra-vars`), sempre a mais forte.
 
 Antes de depurar "por que essa variável não tem o valor esperado", confirme
-em qual desses níveis ela está definida — um `-e` na CI, por exemplo,
+em qual desses níveis ela está definida; um `-e` na CI, por exemplo,
 sobrescreve silenciosamente qualquer `group_vars`.
 
 ## Idempotência na prática
@@ -61,7 +61,7 @@ sobrescreve silenciosamente qualquer `group_vars`.
   baseado no `stdout` ou `rc`) e, quando possível, `creates`/`removes` para
   tornar a task um no-op na segunda execução.
 - `failed_when` deve refletir a falha real do comando, não apenas o `rc`
-  padrão — um script que retorna `0` mas imprime erro no `stderr` precisa de
+  padrão; um script que retorna `0` mas imprime erro no `stderr` precisa de
   `failed_when` customizado para não mascarar a falha.
 - A prova de idempotência é operacional: rodar o mesmo playbook duas vezes
   seguidas contra o mesmo alvo e confirmar `changed=0` na segunda execução,
@@ -70,11 +70,11 @@ sobrescreve silenciosamente qualquer `group_vars`.
 ## Segurança operacional
 
 - Verifique `inventory_hostname`, grupos resolvidos e `ansible_host` antes de
-  qualquer execução com `--limit` amplo — um padrão de host mal escrito pode
+  qualquer execução com `--limit` amplo; um padrão de host mal escrito pode
   atingir mais máquinas do que o pretendido.
 - Use `serial` (quantos hosts por lote), `max_fail_percentage` (tolerância de
   falha antes de abortar o lote) e `any_errors_fatal` (aborta tudo no
-  primeiro erro) conscientemente conforme o risco da mudança — nunca deixe
+  primeiro erro) conscientemente conforme o alcance da mudança; nunca deixe
   no default silencioso para uma mudança que afeta produção.
 - Nunca imprima conteúdo de Vault, tokens, senhas ou templates sensíveis em
   `debug:`; use `no_log: true` na task inteira quando o argumento ou o
@@ -86,6 +86,13 @@ sobrescreve silenciosamente qualquer `group_vars`.
 
 ## Comandos de verificação
 
+No fluxo gerado pelo Specsfy, `./deploy run` pede a senha no terminal e
+`./deploy run --non-interactive` usa uma fonte externa. `./deploy configure-vault`
+configura o arquivo externo por projeto com pasta `700` e arquivo `600`.
+O agente deve usar o modo sem interação; o cadastro da senha pertence à pessoa
+no terminal. As opções e a precedência ficam na referência de Vault do
+especialista de deploy, que mantém os wrappers e o configurador.
+
 ```bash
 ansible-playbook --syntax-check playbook.yml
 ansible-lint playbook.yml
@@ -96,12 +103,12 @@ ansible-playbook -i inventories/staging playbook.yml   # 2ª execução: changed
 
 ## Fontes oficiais
 
-- Documentação geral: https://docs.ansible.com/ansible/latest/
-- Boas práticas: https://docs.ansible.com/ansible/latest/tips_tricks/ansible_tips_tricks.html
-- Precedência de variáveis: https://docs.ansible.com/ansible/latest/reference_appendices/general_precedence.html
-- Roles: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html
-- Handlers: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_handlers.html
-- Vault: https://docs.ansible.com/ansible/latest/vault_guide/
-- Check mode e diff: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_checkmode.html
-- Estratégias de execução (`serial`, `throttle`): https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_strategies.html
-- ansible-lint: https://ansible.readthedocs.io/projects/lint/
+- [Documentação geral](https://docs.ansible.com/ansible/latest/)
+- [Boas práticas](https://docs.ansible.com/ansible/latest/tips_tricks/ansible_tips_tricks.html)
+- [Precedência de variáveis](https://docs.ansible.com/ansible/latest/reference_appendices/general_precedence.html)
+- [Roles](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html)
+- [Handlers](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_handlers.html)
+- [Vault](https://docs.ansible.com/ansible/latest/vault_guide/)
+- [Check mode e diff](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_checkmode.html)
+- [Estratégias de execução (`serial`, `throttle`)](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_strategies.html)
+- [ansible-lint](https://ansible.readthedocs.io/projects/lint/)

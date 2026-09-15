@@ -168,7 +168,8 @@ node scripts/scaffold.mjs --project ../api --image ghcr.io/equipe/api \
 
 Depois da geração, a skill pergunta quais senhas, tokens e chaves a aplicação
 consome e registra os nomes em `ansible/vault-fields.txt`. O utilitário
-solicita a senha do Vault e cada valor com entrada oculta:
+solicita cada valor com entrada oculta. A senha do Vault vem da configuração
+externa ou do terminal, conforme o modo escolhido:
 
 ```bash
 ./deploy secrets

@@ -17,6 +17,10 @@ description: Orquestrar release e deploy em servidor com SEMVER, Docker Swarm e 
 
 ## Fluxo
 
+Apresente o plano, informe o progresso por etapa e encerre com arquivos
+alterados, validações e pendências. Para texto público, siga o Contrato
+Editorial Compartilhado aplicável ao projeto consumidor.
+
 1. Confirmar a raiz do sistema do usuário e acionar
    `$specsfy-specialist-versioning` para ler ou preparar `SEMVER`.
 2. Inspecionar `Dockerfile`, Compose, stack e `ansible/` existentes. Comparar
@@ -75,12 +79,27 @@ description: Orquestrar release e deploy em servidor com SEMVER, Docker Swarm e 
    manager ainda não participa de um swarm e usa tokens protegidos para joins.
 12. Validar Ansible em syntax check, lint, check mode e duas execuções num alvo
    descartável. Validar a stack com `docker stack config`.
-13. Com autorização para o alvo informado, aplicar o playbook, publicar a
-   imagem versionada e executar `docker stack deploy` pelo manager.
+13. Com autorização para o alvo informado, usar `./deploy run --non-interactive`
+   quando o agente executar o deploy. A senha vem de uma fonte externa já
+   configurada. Na ausência dessa fonte, orientar a pessoa a executar
+   `./deploy configure-vault` no próprio terminal; não pedir, ler ou imprimir
+   a senha na conversa. Preservar `./deploy run` como caminho manual.
+   Aplicar o playbook, publicar a imagem versionada e executar
+   `docker stack deploy` pelo manager.
 14. Conferir réplicas, healthchecks, logs, versão e digest. Guardar o comando de
    rollback para a versão anterior.
 
 ## Padrões
+
+- Ler [references/vault.md](references/vault.md) antes de configurar a senha,
+  migrar scripts existentes ou executar pelo agente. A fonte explícita tem
+  precedência sobre ambiente e `ansible.cfg`; o cadastro local é a alternativa
+  quando nenhuma fonte nativa existe. Falha de uma fonte encerra a execução.
+- Não executar `configure-vault` pela IA para preencher a senha. Esse comando
+  pertence à preparação humana, em terminal com entrada oculta.
+- Atualizar projetos existentes por diff, preservando personalizações. O
+  scaffold continua recusando sobrescrita e a atualização da skill não migra
+  automaticamente `./deploy` ou `ansible/`.
 
 - `SEMVER` na raiz do sistema do usuário governa imagem, manifesto, tag Git e
   release.
@@ -132,6 +151,11 @@ description: Orquestrar release e deploy em servidor com SEMVER, Docker Swarm e 
 - Considerar o deploy concluído apenas porque o comando retornou código zero.
 
 ## Validação
+
+- Comprovar o prompt manual, arquivo externo, script de cofre e configuração
+  nativa em um alvo descartável. Sem senha válida, a execução deve parar antes
+  de conectar aos hosts. Conferir permissões `700` e `600`, confirmação de
+  substituição e ausência de valores secretos na saída do configurador.
 
 - Executar `current`, `docker-tag` e `verify-docker-tag` pela skill de
   versionamento.
